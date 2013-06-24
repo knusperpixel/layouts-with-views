@@ -14,10 +14,13 @@
 |----------------------------------------------------------------
 */
 
-$config = require_once 'config/config.php';
-$config['app_dir'] = __DIR__ . '/';
+$app_dir = dirname(__FILE__) . '/';
 
-require_once 'system/LayoutsWithViews.php';
+$config = include $app_dir.'config/config.php';
+$config['app_dir'] = $app_dir;
+$config['base_dir'] = ltrim(dirname($_SERVER['SCRIPT_NAME']), '/').'/';
+
+include $app_dir.'system/LayoutsWithViews.php';
 $app = new LayoutsWithViews( $config );
 
 /*
@@ -26,4 +29,4 @@ $app = new LayoutsWithViews( $config );
 |----------------------------------------------------------------
 */
 
-$app->display();
+$app->display($_GET['view']);

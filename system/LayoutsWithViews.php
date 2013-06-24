@@ -34,12 +34,19 @@ class LayoutsWithViews {
 	}
 
 	public function asset( $asset ) {
-		echo 'http://' . $_SERVER["SERVER_NAME"] . '/' . $this->config['base_dir'] . $this->config['asset_path'] . $asset;
+		//echo 'http://' . $_SERVER["SERVER_NAME"] . '/' . $this->config['base_dir'] . $this->config['asset_path'] . $asset;
+		echo $this->route($this->config['asset_path'] . $asset, false);
 	}
 
-	public function route( $to ) {
+	public function route( $to, $echo = true ) {
 		if ( $to === '/' ) $to = '';
-		echo 'http://' . $_SERVER["SERVER_NAME"] . '/' . $this->config['base_dir'] . $to;
+		$route = 'http://' . $_SERVER["SERVER_NAME"] . '/' . $this->config['base_dir'] . $to;
+
+		if($echo) {
+			echo $route;
+		} else {
+			return $route;
+		}
 	}
 
 	public function matches( $route ) {
@@ -51,7 +58,7 @@ class LayoutsWithViews {
 	}
 
 	public function layout( $layout, $vars = null ) {
-		foreach ($vars as $var => $val ) {
+		foreach ((array)$vars as $var => $val ) {
 			$this->vars[$var] = $val;
 		}
 
@@ -59,7 +66,7 @@ class LayoutsWithViews {
 	}
 
 	public function render( $view, $vars = null ) {
-		foreach ($vars as $var => $val ) {
+		foreach ((array)$vars as $var => $val ) {
 			$$var = $val;
 		}
 
@@ -70,8 +77,8 @@ class LayoutsWithViews {
 		}
 	}
 
-	public function display() {
-		$this->view = ( $_GET['view'] ? $_GET['view'] : $this->config['default_view'] );
+	public function display($view = null) {
+		$this->view = ( empty($view) ? $this->config['default_view'] : $view );
 		$parts = explode('/', $this->view );
 
 		// If this is a nested view (in a sub-folder)
@@ -101,7 +108,7 @@ class LayoutsWithViews {
 		$this->content = ob_get_clean();
 
 		// Get variables being sent to Layout
-		foreach ($this->vars as $var => $val ) {
+		foreach ((array)$this->vars as $var => $val ) {
 			$$var = $val;
 		}
 
